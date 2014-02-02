@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.util.ArrayList;
+import ocelot.object.*;
 
 public class Canvas extends JComponent{
 
@@ -48,7 +49,23 @@ public class Canvas extends JComponent{
         bg.setFrame(0,0,mainframe.getWidth(),mainframe.getHeight());
         g.fill(bg);
         
-        // Draw other stuff
+        // Main Drawing
+        // This draws everything in OBJECT_LIST that is VISIBLE
+        ArrayList OBJECT_LIST = engine.getObjectList();
+        
+        if (OBJECT_LIST == null) return;
+        
+        for (int x = 0; x < OBJECT_LIST.size(); x++) {
+        
+            GameObject object = (GameObject)OBJECT_LIST.get(x);
+        
+            if (object.VISIBLE) {
+                    
+                object.draw(g);
+                
+            }
+        
+        }
         
         // Last thing to draw is the Debug Layer if required
         if (DEBUG_LAYER) debug.drawDebug(g);
@@ -74,6 +91,12 @@ public class Canvas extends JComponent{
     public void toggleDebugLayer() {
         
         DEBUG_LAYER = !DEBUG_LAYER;
+        
+    }
+    
+    public Graphics2D getGraphics() {
+        
+        return g;
         
     }
 

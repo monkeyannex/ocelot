@@ -38,7 +38,7 @@ public class MainFrame extends JFrame implements KeyListener {
         
         
         // start the main drawing canvas that everything with be drawn onto
-        Canvas canvas = new Canvas(debug, engine, this);
+        ocelot.Canvas canvas = new ocelot.Canvas(debug, engine, this);
         
         // Give the debug class everything it needs
         debug.setMainFrame(this);
@@ -87,6 +87,18 @@ public class MainFrame extends JFrame implements KeyListener {
         int key = evt.getKeyCode();
         
         debug.console(3,"KEY_TYPED: " + key);
+        
+    }
+    
+    public String getTitle() {
+        
+        return TITLE;
+        
+    }
+    
+    public String getVersion() {
+        
+        return VERSION;
         
     }
 

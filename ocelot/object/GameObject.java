@@ -25,7 +25,18 @@ public class GameObject {
         engine = iengine;
         
         // Get the other things the object will need
+        debug = engine.getDebug();
+        mainframe = engine.getMainFrame();
+        canvas = engine.getCanvas();
+    
+    }
+    
+    public GameObject(int iOBJECT_ID, String iNAME, String iTYPE, Engine iengine) {        
         
+        super();
+        
+        NAME = iNAME;
+        TYPE = iTYPE;        
     
     }
     
