@@ -13,10 +13,11 @@ public class MainFrame extends JFrame implements KeyListener {
     private static int WIDTH = 900;
     private static int HEIGHT = 450;
     
-    private boolean FULLSCREEN = true;
+    private boolean FULLSCREEN = false;
     
     private Debug debug;
     private Engine engine;
+    private ocelot.Canvas canvas;
     
     public MainFrame(Debug idebug, Engine iengine) {
         
@@ -38,7 +39,7 @@ public class MainFrame extends JFrame implements KeyListener {
         
         
         // start the main drawing canvas that everything with be drawn onto
-        ocelot.Canvas canvas = new ocelot.Canvas(debug, engine, this);
+        canvas = new ocelot.Canvas(debug, engine, this);
         
         // Give the debug class everything it needs
         debug.setMainFrame(this);
@@ -61,7 +62,18 @@ public class MainFrame extends JFrame implements KeyListener {
         
         debug.console(3,"MAIN_FRAME: Game Window created.");
         
+        // Enable fullscreen if needed
+        if(FULLSCREEN) {
+            
+            // NOt sure why or how this works, but it enables fullscreen mode
+            GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
+            
+        }
+        
     }
+    
+    /* GLOBAL KEYSTROKES HANDLED HERE */
+    /* PHASE SPECIFIC HANDLED IN PHASES */
     
     // allows code to run on a keypress
     public void keyPressed(KeyEvent evt) {
@@ -69,6 +81,20 @@ public class MainFrame extends JFrame implements KeyListener {
         int key = evt.getKeyCode();
         
         debug.console(3,"KEY_PRESSED: " + key);
+        
+        switch (key) {
+            
+            // 'TILDE'    
+            case 192:
+                canvas.toggleDebugLayer();                
+                break;
+                
+            // Pass on the key to the running phase
+            default:
+                engine.runningPhase.keyPressed(key);
+                break;
+            
+        }
         
     }
     
@@ -79,6 +105,15 @@ public class MainFrame extends JFrame implements KeyListener {
         
         debug.console(3,"KEY_RELEASED: " + key);
         
+        switch (key) {
+                
+            // Pass on the key to the running phase
+            default:
+                engine.runningPhase.keyReleased(key);
+                break;
+            
+        }
+        
     }
     
     // allows code to run when a key is typed
@@ -87,6 +122,15 @@ public class MainFrame extends JFrame implements KeyListener {
         int key = evt.getKeyCode();
         
         debug.console(3,"KEY_TYPED: " + key);
+        
+        switch (key) {
+                
+            // Pass on the key to the running phase
+            default:
+                engine.runningPhase.keyTyped(key);
+                break;
+            
+        }
         
     }
     

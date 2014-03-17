@@ -27,6 +27,8 @@ public class Debug {
 		LEVEL = lvl;
 		//Create log file with datetime appending to it
 		//in the /logs folder
+        
+        
 		
 	}
 	
@@ -67,7 +69,7 @@ public class Debug {
     
     public void drawDebug(Graphics g) {
 		
-        g.setFont(new Font("default", Font.PLAIN, 10));
+        g.setFont(new Font("Expressway Rg", Font.PLAIN, 10));
         
         int Y_SPACING = 15;
         int POS_X = 10;
@@ -85,4 +87,5 @@ public class Debug {
         g.drawString("FPS: " + engine.getFPS(), POS_X, (POS_Y += Y_SPACING));
         
 	}
+    
 }

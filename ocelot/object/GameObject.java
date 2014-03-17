@@ -14,6 +14,11 @@ public class GameObject {
     public boolean VISIBLE = false;
     public boolean SOLID = false;
     
+    public int HEALTH;
+    public int HEALTH_MAX;
+    
+    public Rectangle2D.Double HITBOX;
+    
     public ocelot.Canvas canvas;
     public MainFrame mainframe;
     public Engine engine;
@@ -40,10 +45,9 @@ public class GameObject {
     
     }
     
-    public boolean detectCollision() {
+    public void detectCollision() {
         
         debug.console(2, NAME + "(" + OBJECT_ID + ")" + ": Cannot detect collision, object is empty.");
-        return false;
         
     }
     
@@ -104,4 +108,40 @@ public class GameObject {
         
     }
     
+    public int getHealth() {
+        
+        return HEALTH;
+        
+    }
+    
+    public int getMaxHealth() {
+        
+        return HEALTH_MAX;
+        
+    }
+    
+    public void adjustHealth(int amount, String source) {
+        
+        HEALTH += amount;
+        
+    }
+    
+    public void setHealth(int amount) {
+        
+        HEALTH = amount;
+        
+    }
+    
+    public void updateHitbox() {
+        
+        debug.console(2, NAME + "(" + OBJECT_ID + ")" + ": Cannot get hitbox, it is not set.");
+        
+    }
+    
+    public Rectangle2D.Double getHitbox() {
+        
+        debug.console(2, NAME + "(" + OBJECT_ID + ")" + ": Cannot get hitbox, it is not set.");
+        return null;
+        
+    }
 }

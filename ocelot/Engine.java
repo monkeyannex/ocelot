@@ -4,6 +4,9 @@ package ocelot;
 import java.util.ArrayList;
 import ocelot.engine.*;
 import ocelot.object.*;
+import javax.swing.*;
+import java.awt.*;
+import java.io.*;
 
 public class Engine implements Runnable {
     
@@ -25,6 +28,7 @@ public class Engine implements Runnable {
     /* OBJECT HANDLING VARIABLES */
     private static int OBJECT_UID = 1000;   // Tracks the unique identifying number of an object
     private ArrayList OBJECT_LIST;          // Holds all the objects in the game
+    private ArrayList TIMER_LIST;           // Stores any running timers so they can all up updated each cycle
     
     
     // The number of loops the engine has executed
@@ -34,8 +38,12 @@ public class Engine implements Runnable {
     private Debug debug;
     private ocelot.Canvas canvas;
     private MainFrame mainframe;    
-    private Phase runningPhase;
+    public Phase runningPhase;
     private Phase defaultPhase;
+    
+    /* FONTS USED */
+    private Font fontStandard = null;
+    private Font fontStylised = null;
 
     // Constructor
     public Engine(Debug idebug) {
@@ -56,6 +64,33 @@ public class Engine implements Runnable {
         // Initialise the appropriate ArrayLists
         fps = new ArrayList();
         OBJECT_LIST = new ArrayList(); 
+        TIMER_LIST = new ArrayList();
+        
+        // Setup the fonts to use
+        try {
+        
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            
+            // Font 1
+            File fontFile = new File("fonts/zephyrean.brk.ttf");                    
+            fontStylised = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+            ge.registerFont(fontStylised);
+            
+            // Font 2
+            fontFile = new File("fonts/expressway-free.regular.ttf");
+            fontStandard = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+            ge.registerFont(fontStandard);
+            
+            // This code will print out all the fonts that can be used by the system.
+            // Used for debug only
+            //for (String fontz:ge.getAvailableFontFamilyNames()) System.out.println(fontz);
+        
+        }
+        catch(FontFormatException | IOException e) {
+            
+            debug.console(2,"ENGINE: Stylised font error: " + e + ".");
+            
+        }
         
         debug.console(3,"ENGINE: Engine started.");
     
@@ -81,6 +116,9 @@ public class Engine implements Runnable {
             // Update the total uptime of the running engine
             // Convert it to double for readability
             ENGINE_UPTIME += (double)LOOP_UPDATE / 1000000000;
+            
+            // Update any running timers
+            timersUpdate((double)LOOP_UPDATE / 1000000000);
             
             // Calculate fps
             fpsCalc(LOOP_UPDATE);
@@ -176,6 +214,59 @@ public class Engine implements Runnable {
     public double getFPS() {
         
         return FPS_CURRENT;
+        
+    }
+    
+    public void timersUpdate(double iLOOP_UPDATE) {
+        
+        // Convert to a double for ease of use
+        //iLOOP_UPDATE = (double)LOOP_UPDATE / 1000000000;
+        
+        // dont do anything unless
+        if (TIMER_LIST == null) return;
+        
+        for (int x = 0; x < TIMER_LIST.size(); x++) {
+        
+            GenericTimer timer = (GenericTimer)TIMER_LIST.get(x);
+        
+            if (timer.isRunning()) timer.updateTime(iLOOP_UPDATE);
+        
+        }
+        
+    }
+    
+    // Add a timer to the list of running timers
+    public void addTimer(Object iobject) {
+        
+        TIMER_LIST.add(iobject);
+        
+        return;
+        
+    }
+    
+    // Removes a timer based on its index
+    public void removeTimer(int index) {
+        
+        TIMER_LIST.remove(index);
+        TIMER_LIST.trimToSize();
+        
+    }
+    
+    // Returns the position of the timer based on its UID
+    public int getTimerIndex(int iTIMER_UID) {
+        
+        for (int x = 0; x < TIMER_LIST.size(); x++) {
+        
+            GenericTimer timer = (GenericTimer)TIMER_LIST.get(x);
+        
+            if (timer.getTimerUID() == iTIMER_UID) return x;
+        
+        }
+        
+        // if the object doesnt exist, return a huge number
+        // not sure to get around this in a nicer fashion
+        // will deal with it later
+        return 999999999;
         
     }
     
@@ -277,6 +368,17 @@ public class Engine implements Runnable {
     public void setCanvas(ocelot.Canvas icanvas) {
         
         canvas = icanvas;
+        
+    }
+
+    public Font getStylisedFont() {
+        
+        //if (ifont.equals("stylised")) return fontStylised;
+        //if (ifont.equals("standard")) return fontStandard;
+        if (fontStylised == null) debug.console(3,"ENGINE: Styleised font is null.");
+        
+        // always return the standard font unless a correct match is made
+        return fontStylised;
         
     }
 
